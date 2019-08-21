@@ -1,0 +1,505 @@
+// sass variables with mixin and color  variables
+
+$primary-color: #222;
+$secondary-color:#eece1a;
+$show-home-image:true;
+$home-image: url(../img/landscape.jpeg);
+$backgroud-opacity: 0.8;
+@mixin easeOut {
+  transition: all 0.5s ease-out; // transiton effect to make a bit animate
+}
+@mixin background {
+  @if $show-home-image {
+    &#bg-img {
+      background: $home-image;
+      background-attachment: fixed;
+      background-size: cover;
+      // can have a class of overlay as .overlay with the pseudoclass
+      /* 
+      .overlay {
+        position: absolute;cls
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba($primary-color, $backgroud-opacity);
+        z-index: -1;
+      */
+      &:after {  // overlay affect on the background that is a bit transparent using pseudoclass(after and content)
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba($primary-color, $backgroud-opacity);
+        z-index: -1;
+      }
+    }
+  }
+  
+}
+
+// SET TEXT COLOR it function on the lightness o f color parse into the primary color
+@function set-text-color($color) {
+  @if (lightness($color) > 40)  {
+    @return #000;
+  } @else {
+    @return #fff;
+  }
+}
+
+
+// media queries mixins
+@mixin mediaSm{
+  @media screen and (max-width: 500px) {
+    @content;
+  }
+}
+
+@mixin mediaMd {
+  @media screen and (max-width: 768px) {
+    @content;
+  }
+}
+@mixin mediaLg {
+  @media screen and (min-width:769) and ( max-width: 1170px ) {
+    @content;
+  }
+}
+@mixin mediaXl {
+  @media screen and (min-width:1171 px){
+    @content;
+  }
+}
+// end of the sass variables
+  * {
+      box-sizing: border-box;
+  }
+  // body with a mixin background 
+body{
+  @include background;
+    background: $primary-color;
+    color: set-text-color($primary-color);
+    height: 100%;
+    margin: 0;
+    padding: 0;
+   line-height: 1.5;   
+    font-family: 'Roboto', Tahoma, Geneva, Verdana, sans-serif; 
+}
+.logo{ 
+   width: 60px;
+   height: 60px;
+   padding: 5px 5px;
+}
+// headings
+h1,h2,h3 {
+    margin:0;
+    font-weight: 400; 
+ 
+    &.lg-heading { // amp& is using to make nesting instead of writing the nested css traditonally
+        font-size: 6rem;
+    }
+    &.sm-heading {
+      margin-bottom: 2rem;
+      padding: 0.2rem 1rem;
+      background: rgba( lighten($primary-color, 2), 0.2);
+    }
+}
+ a {
+   color: #fff;
+   text-decoration: none;
+ }
+
+ header {
+   position: fixed; /*make the header fixed even with the scroll of the page it remains like that*/
+   z-index: 2;
+   width: 100%;  
+ }
+ .text-secondary {
+   color: $secondary-color;
+ }
+
+ main {
+   padding: 4rem;
+   //height: 100%;
+   min-height: calc(100vh - 60px); // calc function is used to make the footer sticky from the main section of the page
+   .icons {
+     margin-top: 1rem;
+
+     a {
+       padding: 0.4rem; 
+       &:hover {
+         color: $secondary-color;
+         @include easeOut(); // calling the mixin function transition: easeout;
+       }
+     }
+
+   }
+   &#home {
+     overflow: hidden;
+     h1{
+       margin-top: 20vh;
+     }
+   }
+ } 
+ .animated {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif, serif;
+  margin: 0;
+  padding: 0;
+  background: url(../img/clip.JPG);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: moveBg 10s linear infinite;
+  -webkit-animation: moveBg 10s linear infinite;
+}
+@keyframes moveBg {
+  0% {
+    background-position: 0% 30%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+
+}
+
+
+ // Menu Button
+ .menu-btn {
+   position: absolute; // position absolute to make the menu btn flexible to be moved around
+   z-index: 3; // it makes the menu btn stay close to you as in visible on the backgroud when clicked
+   top: 35px;
+   right: 35px;
+   cursor: pointer;
+   @include easeOut;
+
+   .btn-line {
+     width: 28px;
+     height: 3px;
+     margin: 0 0 5px 0;
+     background: set-text-color($primary-color);
+     @include easeOut;
+   }
+     // rotate into X with menu Lines
+
+     &.close {
+       transform: rotate(180deg);
+       .btn-line {
+         //line 1 rotate
+         &:nth-child(1){
+           transform: rotate(45deg) translate(5px, 5px); // translate make the postion of the fixed
+         }
+
+         // line 2 hide
+         &:nth-child(2){
+          opacity: 0; // it hides the third line
+        }
+         // line 3 rotate
+         &:nth-child(3){
+          transform: rotate(-45deg) translate(7px, -6px); // negative value make the 3-line rotate  anti-clockwise
+        }
+       }
+     }
+
+ } 
+
+
+
+ // Menu Overlay 
+ .menu {
+   position: fixed;
+   top: 0;
+   width: 100%;
+   opacity: .95;
+   visibility: hidden;
+   &.show {  // this class was added from the main.js javascript file
+     visibility: visible;// makes the menu visible when you click the btn
+   }
+   &-branding, 
+   &-nav {
+     display: flex;
+     flex-flow: column wrap;
+     align-items: center;
+     justify-content: center;
+     float: left;
+     width: 50%; // makes the nav and branding takes each 50% of the width;
+     height: 100vh; // fill the whole device height
+     overflow: hidden;
+
+   }
+   &-nav {
+     margin: 0;
+     padding: 0;
+     background: darken($primary-color, 5);
+     list-style: none;
+     transform: translate3d(0, -100%, 0); // negative -100% indicate the nav is coing from the top
+     @include easeOut;
+
+     &.show {
+       // slide from top
+       transform: translate3d(0, 0, 0);
+     }
+
+   }
+   // branding slide 
+   &-branding {
+     background: $primary-color;
+     transform: translate3d(0, 100%, 0); // postive 100% indicate the branding is coming from the bottom
+     @include easeOut;
+
+     &.show {
+      // slide from bottom
+      transform: translate3d(0, 0, 0);
+    }
+    .portrait {
+      width: 250px;
+      height: 250px;
+      background: url('../img/CROP.jpg');
+      border-radius: 50%;
+      border: 3px solid $secondary-color;
+    }
+   }
+   .nav-item {
+     transform: translate3d(600px,0, 0); // nav items flows from the right
+     @include easeOut;
+     &.show {
+      // slide from right
+      transform: translate3d(0, 0, 0);
+    }
+    &.current > a { // indicate the nav item color
+      color: $secondary-color;
+    }
+   }
+   .nav-link {
+      display: inline-block;
+      font-size: 20px;
+      text-transform: capitalize;
+      padding: 1rem 0;
+      font-weight: 400;
+      position: relative;
+      color: set-text-color($primary-color);
+      text-decoration: none;
+      @include easeOut;
+      &:hover {
+        color: $secondary-color;
+      }
+   }
+ }
+ 
+
+ // delay each nav items slide by 0.1s
+
+ @for $x from 1 through 4 {  // for loop for make the transition delay in .1s for each child
+   .nav-item:nth-child(#{$x}){
+     transition-delay: $x * 0.1s;
+   }
+ }
+
+
+
+.about-info {
+  display: grid;
+  grid-template-areas:  // this arrangement gives the visual arrangement of the colunms i.e with bio taking 2-columns
+   'bioimage bio bio'
+   'job1 job2 job3';
+   grid-template-columns: repeat(3, 1fr); // give 3*2 column followimg the arrangement of the areas above
+   grid-gap: 30px;
+   
+.bio-image {
+  grid-area: bioimage;
+  margin: auto;
+  border-radius: 50%;
+  border: $secondary-color 3px solid;
+}
+.bio {
+  grid-area: bio;
+  font-size: 1.5rem;
+
+}
+.job-1 {
+  grid-area: job1;
+}
+.job-2 {
+  grid-area: job2;
+}
+.job-3 {
+  grid-area: job3;
+}
+.job {
+  background: lighten($primary-color,5);
+  padding: 0.5rem;
+  border-bottom: 5px solid $secondary-color;
+}
+}
+
+// works/ projects
+.projects {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  grid-gap: 20px;
+  justify-content: center;
+  align-content: center;
+   & a{
+     font-weight: 300;
+   }
+}
+ img {
+   width: 100%; //makes the image to fill it container 
+   border: 3px solid #fff;
+   &:hover {
+     opacity: 0.5;
+     border-color: $secondary-color;
+     @include easeOut;
+   }
+ }
+ // contact page 
+  .boxes {
+    display: flex;
+    flex-wrap: wrap; // make the items in boxes wrap as it get smaller on screens
+    justify-content: space-evenly; // spaced with reasonable interval
+    align-content: center;
+    margin-top: 1rem;
+
+    div {
+      border: 3px solid #fff;
+      font-size: 2rem;
+      padding: 1.5rem 2.5rem;
+      margin-bottom: 3rem;
+      @include easeOut;
+
+      &:hover {
+        padding: 0.5rem 1.5rem;
+        background: $secondary-color;
+        color: set-text-color($secondary-color);
+        span {
+          color: set-text-color($secondary-color);
+
+        }
+
+      }
+  
+    }
+  }
+  
+
+ //Button Styles
+  .btn {
+    display: block;
+    padding: 0.5rem 1rem;
+    border: 0;
+    margin-bottom: 0.3rem;
+    &:hover {
+      background: $secondary-color;
+      color: set-text-color($secondary-color);
+    }
+  }
+  .btn-dark {
+   @extend .btn; // using @extend btn-dark & light inherit it property from btn class (like father like son)
+   background: darken($primary-color, 10);
+   color: #fff;
+  }
+  .btn-light {
+     @extend .btn;
+     background: lighten($primary-color,  10);
+     color: #333;
+  }
+ #main-footer {
+   text-align: center;
+   padding: 1rem;
+   background: darken($primary-color,  10);
+   color: set-text-color($primary-color);
+   height: 60px;
+ }
+
+
+
+
+
+// media queries
+ // Widescreens 
+ @include mediaXl {
+   .projects{
+     grid-template-columns: repeat(4,1fr);
+   }
+  
+}
+// Desktops and laptops 
+@include mediaLg {
+  .projects{
+    grid-template-columns: repeat(3,1fr);
+  }
+  
+}
+// Tablets and  small laptops 
+@include mediaMd {
+ main {
+   align-items: center;
+   text-align: center;
+   .lg-heading{
+     line-height: 1;
+     margin-bottom: 1rem;
+   }
+ }
+
+ ul.menu-nav, div.menu-branding {
+   float: none;
+   width: 100%;
+   min-height: 0;
+
+   &.show {
+      transform: translate3d(0, 0, 0);
+   }
+ }
+ .menu-nav {
+   height: 50vh;
+   transform: translate3d(-100%, 0, 0);
+   font-size: 24px;
+ }
+ .menu-branding {
+   height: 50vh;
+   transform: translate3d(100%, 0, 0);
+ }
+ .portrait {
+   background: url('../img/CROP.jpg');
+   width: 150px;
+   height: 150px;
+ }
+ h1,h2,h3 {
+   margin:0;
+   font-weight: 400; 
+
+   &.lg-heading {
+       font-size: 2rem;
+   }
+   &.sm-heading {
+     margin-bottom: 2rem;
+     padding: 0.2rem 1rem;
+     background: rgba( lighten($primary-color, 2), 0.2);
+   }
+  }
+  .about-info {
+    grid-template-areas: 
+    'bioimage'
+    'bio'
+    'job1'
+    'job2'
+    'job3';
+    grid-template-columns: 1fr;
+  }
+  .projects{
+    grid-template-columns: repeat(2,1fr);
+  }
+}
+// Smartphones 
+@include mediaSm {
+ main#home h1 {
+   margin-top: 10vh;
+ }
+ .projects{
+  grid-template-columns: repeat(1,1fr);
+}
+.boxes div {
+  font-size: 1.5rem;
+}
+}
